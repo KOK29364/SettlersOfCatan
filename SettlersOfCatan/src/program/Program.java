@@ -37,7 +37,7 @@ public class Program extends Application{
 	/* Start the Program */
 	public void start(Stage stage) throws Exception {
 		
-		grid = new Grid(20, 20, 1, 1.1);
+		grid = new Grid(3, 1, 1.1);
 		
 		SimpleDoubleProperty angleX = new SimpleDoubleProperty();
 		SimpleDoubleProperty angleY = new SimpleDoubleProperty();
@@ -73,8 +73,10 @@ public class Program extends Application{
         pivot.setZ(grid.getSize().getWidth() / 2);
         
 		Group root = new Group();
+		
+		grid.getTileMeshes().getChildren().stream().forEach(node -> node.setOnMouseClicked(event -> System.out.println(node.getTranslateX() + ", " + node.getTranslateZ())));
 
-		root.getChildren().addAll(grid.getTiles().getChildren());
+		root.getChildren().addAll(grid.getTileMeshes().getChildren());
 
 		root.getChildren().add(bl);
 		root.getChildren().add(tl);
