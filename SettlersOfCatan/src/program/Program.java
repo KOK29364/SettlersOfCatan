@@ -68,9 +68,9 @@ public class Program extends Application{
         tl.setTranslateY(50);
         tl.setColor(Color.CYAN);
         
-        pivot.setX(grid.getSize().getHeight() / 2);
-        pivot.setY(0);
-        pivot.setZ(grid.getSize().getWidth() / 2);
+        pivot.setX(grid.getCenter().getX());
+        pivot.setY(grid.getCenter().getY());
+        pivot.setZ(grid.getCenter().getZ());
         
 		Group root = new Group();
 		
