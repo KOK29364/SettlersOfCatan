@@ -74,7 +74,7 @@ public class Program extends Application{
         
 		Group root = new Group();
 		
-		grid.getTileMeshes().getChildren().stream().forEach(node -> node.setOnMouseClicked(event -> System.out.println(node.getTranslateX() + ", " + node.getTranslateZ())));
+		grid.getTileMeshes().getChildren().stream().forEach(node -> node.setOnMouseClicked(event -> System.out.println()));
 
 		root.getChildren().addAll(grid.getTileMeshes().getChildren());
 
@@ -88,8 +88,10 @@ public class Program extends Application{
 				true,
 				SceneAntialiasing.BALANCED
 		);
+		
 		subScene.setCamera(camera);
 		subScene.setFill(Color.BLACK);
+		
 		subScene.setOnScroll(event -> {
             angleX.set(angleX.doubleValue() + (event.getDeltaX() / 10));
             angleY.set(angleY.doubleValue() + (event.getDeltaY() / 10));
@@ -100,6 +102,7 @@ public class Program extends Application{
            	 angleY.set(-15);
            }
         });
+		
 		Group group = new Group();
         group.getChildren().add(subScene);
 		

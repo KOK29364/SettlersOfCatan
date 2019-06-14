@@ -1,7 +1,7 @@
 package terrain;
 
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
+
 import javafx.scene.paint.PhongMaterial;
 
 import javafx.scene.shape.MeshView;
@@ -13,16 +13,18 @@ public class Tile {
 	private float size; // The size of one Tile, represented as the distance from its center to any corner
 	private float height; // The height of the Tile, from its base to top
 	private MeshView mesh; // The 3D mesh of the Tile
+	private Terrain terrain; // The Terrain the Tile represents
 	
 	/* Initialize the Tile with a given location, size and height */
-	public Tile(Point3D location, float size, float height){ 
+	public Tile(Point3D location, float size, float height, Terrain terrain){ 
 		
 		this.location = location;
 		this.size = size;
 		this.height = height;
+		this.terrain = terrain;
 		
 		this.mesh = new MeshView(Tile.createHexagonMesh(this.size, this.height));
-		this.mesh.setMaterial(new PhongMaterial(Color.LIGHTGREY));
+		this.mesh.setMaterial(new PhongMaterial(this.terrain.getColor()));
 		this.mesh.setTranslateX(this.location.getX());
 		this.mesh.setTranslateY(this.location.getY());
 		this.mesh.setTranslateZ(this.location.getZ());
@@ -30,13 +32,15 @@ public class Tile {
 	}
 	
 	/* Initialize the Tile with a given location, size, height and mesh */
-	public Tile(Point3D location, float size, float height, TriangleMesh mesh){
+	public Tile(Point3D location, float size, float height, TriangleMesh mesh, Terrain terrain){
 		
 		this.location = location;
 		this.size = size;
 		this.height = height;
+		this.terrain = terrain;
 		
 		this.mesh = new MeshView(mesh);
+		this.mesh.setMaterial(new PhongMaterial(this.terrain.getColor()));
 		this.mesh.setTranslateX(this.location.getX());
 		this.mesh.setTranslateY(this.location.getY());
 		this.mesh.setTranslateZ(this.location.getZ());

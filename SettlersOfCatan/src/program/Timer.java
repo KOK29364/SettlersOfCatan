@@ -32,28 +32,28 @@ public class Timer {
 	}
 	
 	/* Adds a new action to the TimeLine to be performed */
-	public void addKeyFrame(EventHandler<ActionEvent> ae){ 	
+	public void addKeyFrame(EventHandler<ActionEvent> ae){
 		KeyFrame kf = new KeyFrame(Duration.millis(1000 / 60), ae);
 		t.getKeyFrames().add(kf);
 	}
 	
 	/* Returns a String representation of the Timer */
-	public String toString(){ 
+	public String toString(){
 		return "Timer [ticks: " + this.ticks + ", isCounting: " + this.isCounting + "]";
 	}
 	
 	/* Starts the Timer */
-	public void start(){ 
+	public void start(){
 		t.play();
 	}
 	
 	/* Starts a count to get the number of ticks passed in an interval */
-	public void startCount(){ 
+	public void startCount(){
 		this.isCounting = true;
 	}
 	
 	/* Stops the count and returns the number of ticks since startCount() has been called */
-	public int stopCount(){ 
+	public int stopCount(){
 		this.isCounting = false;
 		return (int) this.count;
 	}
