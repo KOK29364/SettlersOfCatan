@@ -1,5 +1,11 @@
 package program;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+
 import javafx.application.Application;
 
 import javafx.beans.property.SimpleDoubleProperty;
@@ -11,12 +17,13 @@ import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import javafx.scene.paint.Color;
-
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -75,9 +82,18 @@ public class Program extends Application{
 		Group root = new Group();
 		
 		grid.getTileMeshes().getChildren().stream().forEach(node -> node.setOnMouseClicked(event -> System.out.println()));
+		
+		Box table = new Box(50, 0.5, 50);
+		PhongMaterial wood = new PhongMaterial();
+		System.out.println(new File("res/texture/YES.jpg").exists());
+		wood.setDiffuseMap(new Image(new FileInputStream("res/texture/YES.jpg")));
+		table.setMaterial(wood);
+		table.setTranslateY(0.3);
+		table.setTranslateX(grid.getCenter().getX());
+		table.setTranslateZ(grid.getCenter().getZ());
 
 		root.getChildren().addAll(grid.getTileMeshes().getChildren());
-
+		root.getChildren().add(table);
 		root.getChildren().add(bl);
 		root.getChildren().add(tl);
 		root.getChildren().add(camera);
@@ -90,7 +106,7 @@ public class Program extends Application{
 		);
 		
 		subScene.setCamera(camera);
-		subScene.setFill(Color.BLACK);
+		subScene.setFill(Color.AZURE);
 		
 		subScene.setOnScroll(event -> {
             angleX.set(angleX.doubleValue() + (event.getDeltaX() / 10));
@@ -120,6 +136,7 @@ public class Program extends Application{
 			}
 			
 		});
+		
 
 		stage.setScene(scene);
 		
