@@ -28,8 +28,13 @@ public class MyClientSocket {
 
 	public static void main(String[] args) throws Exception {
 		String serverIP = "172.16.152.1";
-		String port = "37175";
-		MyClientSocket client = new MyClientSocket(InetAddress.getByName(serverIP), Integer.parseInt(port));
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("\nIP: ");
+		final String ip = scanner.nextLine();
+		System.out.print("Port: ");
+		final String port = scanner.nextLine();
+
+		MyClientSocket client = new MyClientSocket(InetAddress.getByName(ip), Integer.parseInt(port));
 
 		System.out.println("\r\nConnected to Server: " + client.socket.getInetAddress());
 		client.start();
