@@ -8,5 +8,4 @@ public enum Resource {
 	WOOL(),
 	CLAY();
 	
-	
 }

@@ -27,8 +27,8 @@ public class MyClientSocket {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String serverIP = "192.168.7.169";
-		String port = "41875";
+		String serverIP = "172.16.152.1";
+		String port = "37175";
 		MyClientSocket client = new MyClientSocket(InetAddress.getByName(serverIP), Integer.parseInt(port));
 
 		System.out.println("\r\nConnected to Server: " + client.socket.getInetAddress());
