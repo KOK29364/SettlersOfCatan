@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
-public class EchoClient {
+public class ClientScript {
 	public static void main(String[] args) throws IOException {
 
 //		final String hostName = "alpin.gencer.us";
@@ -23,14 +23,30 @@ public class EchoClient {
 
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-			while (true) {
+			loop: while (true) {
 				String input = stdIn.readLine();
-				writer.println(input);
+
+				switch (input) {
+					case "exit":
+						writer.println("exit");
+						break loop;
+					case "lobby":
+						System.out.println("Enter ID:");
+						final int lobbyID = Integer.parseInt(stdIn.readLine());
+						System.out.println("Looking for a game with ID " + lobbyID + "...");
+						writer.println("lobby:" + lobbyID);
+						break;
+					case "random":
+						System.out.println("Looking for a random game...");
+						writer.println("random");
+						break;
+
+					default:
+						writer.println(input);
+						break;
+				}
 
 				System.out.println("echo: " + reader.readLine());
-				if (input.equals("exit")) {
-					break;
-				}
 			}
 
 			stdIn.close();
