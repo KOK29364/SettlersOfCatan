@@ -10,20 +10,33 @@ import java.net.UnknownHostException;
 
 public class EchoClient {
 	public static void main(String[] args) throws IOException {
-//		String hostName = "alpin.gencer.us";
-		String hostName = "127.0.0.1";
-		int portNumber = 32323;
 
-		try (Socket echoSocket = new Socket(hostName, portNumber);
-				PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-				BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
+//		final String hostName = "alpin.gencer.us";
+		final String hostName = "127.0.0.1";
+		final int portNumber = 32323;
+
+		try (Socket serverSocket = new Socket(hostName, portNumber)) {
 			System.out.println("Connection established to " + hostName + ".");
-			String userInput;
-			while ((userInput = stdIn.readLine()) != null) {
-				out.println(userInput);
-				System.out.println("echo: " + in.readLine());
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+			PrintWriter writer = new PrintWriter(serverSocket.getOutputStream(), true);
+
+			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+			while (true) {
+				String input = stdIn.readLine();
+				writer.println(input);
+
+				System.out.println("echo: " + reader.readLine());
+				if (input.equals("exit")) {
+					break;
+				}
 			}
+
+			stdIn.close();
+			reader.close();
+			writer.close();
+			serverSocket.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + hostName);
 			System.exit(1);
@@ -32,4 +45,5 @@ public class EchoClient {
 			System.exit(1);
 		}
 	}
+
 }

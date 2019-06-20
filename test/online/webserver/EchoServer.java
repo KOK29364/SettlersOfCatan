@@ -1,35 +1,34 @@
 package online.webserver;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 
 public class EchoServer {
-	public static void main(String[] args) throws IOException {
 
-		if (args.length != 1) {
-			System.err.println("No port number given.");
+	public final static int PORT_NUMBER = 32323;
+
+
+	public EchoServer() {
+		try (ServerSocket serverSocket = new ServerSocket(PORT_NUMBER)) {
+			System.out.println("Server is listening on port " + PORT_NUMBER);
+
+			while (true) {
+				Socket clientSocket = serverSocket.accept();
+				System.out.println("New client: " + clientSocket.getInetAddress());
+
+				new ServerThread(clientSocket).start();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
 			System.exit(1);
 		}
-
-		int portNumber = Integer.parseInt(args[0]);
-
-		try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt(args[0]));
-				Socket clientSocket = serverSocket.accept();
-				PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));) {
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				out.println(inputLine);
-			}
-		} catch (IOException e) {
-			System.out.println("Exception caught when trying to listen on port " + portNumber + " or listening for a connection");
-			System.out.println(e.getMessage());
-		}
 	}
-}
 
+	public static void main(String[] args) throws IOException {
+		new EchoServer();
+	}
+
+}
