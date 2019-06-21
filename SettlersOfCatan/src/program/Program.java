@@ -1,10 +1,6 @@
 package program;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
 
 import javafx.application.Application;
 
@@ -17,13 +13,17 @@ import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+
 import javafx.scene.image.Image;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+
 import javafx.scene.shape.Box;
+
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -72,8 +72,9 @@ public class Program extends Application{
         
         PointLight tl = new PointLight();
         tl.setLightOn(true);
-        tl.setTranslateY(50);
-        tl.setColor(Color.CYAN);
+        tl.setTranslateY(grid.getCenter().getY());
+		tl.setTranslateX(grid.getCenter().getX());
+		tl.setTranslateZ(grid.getCenter().getZ());
         
         pivot.setX(grid.getCenter().getX());
         pivot.setY(grid.getCenter().getY());
@@ -85,8 +86,8 @@ public class Program extends Application{
 		
 		Box table = new Box(50, 0.5, 50);
 		PhongMaterial wood = new PhongMaterial();
-		System.out.println(new File("res/texture/YES.jpg").exists());
 		wood.setDiffuseMap(new Image(new FileInputStream("res/texture/YES.jpg")));
+		
 		table.setMaterial(wood);
 		table.setTranslateY(0.3);
 		table.setTranslateX(grid.getCenter().getX());
@@ -111,8 +112,8 @@ public class Program extends Application{
 		subScene.setOnScroll(event -> {
             angleX.set(angleX.doubleValue() + (event.getDeltaX() / 10));
             angleY.set(angleY.doubleValue() + (event.getDeltaY() / 10));
-            if(angleY.doubleValue() < -55){
-            	 angleY.set(-55);
+            if(angleY.doubleValue() < -75){
+            	 angleY.set(-75);
             }
             if(angleY.doubleValue() > -15){
            	 angleY.set(-15);

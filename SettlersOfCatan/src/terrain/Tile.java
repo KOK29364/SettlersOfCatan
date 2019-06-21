@@ -1,6 +1,11 @@
 package terrain;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.geometry.Point3D;
+
+import javafx.scene.image.Image;
 
 import javafx.scene.paint.PhongMaterial;
 
@@ -40,7 +45,13 @@ public class Tile {
 		this.terrain = terrain;
 		
 		this.mesh = new MeshView(mesh);
-		this.mesh.setMaterial(new PhongMaterial(this.terrain.getColor()));
+		PhongMaterial wood = new PhongMaterial();
+		try {
+			wood.setDiffuseMap(new Image(new FileInputStream("res/texture/YES.jpg")));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		this.mesh.setMaterial(wood);
 		this.mesh.setTranslateX(this.location.getX());
 		this.mesh.setTranslateY(this.location.getY());
 		this.mesh.setTranslateZ(this.location.getZ());
@@ -55,7 +66,15 @@ public class Tile {
 	/* Create a hexagon-shaped TriangleMesh */
 	public static TriangleMesh createHexagonMesh(float size, float height){
 		TriangleMesh ret = new TriangleMesh();
-		ret.getTexCoords().addAll(0,0);
+		ret.getTexCoords().addAll(
+				// Only Top Face
+				(float) 1,(float) 0.5,
+				(float) 0.75, (float) 0.067,
+				(float) 0.25, (float) 0.067,
+				(float) 0, (float) 0.5,
+				(float) 0.25, (float) 0.933,
+				(float) 0.75, (float) 0.933
+		);
 		ret.getPoints().addAll(
 	 			size * (float) Math.cos(0),						-height / 2,			size * (float) Math.sin(0),
 	 			size * (float) Math.cos(Math.PI / 3),			-height / 2, 			size * (float) Math.sin(Math.PI / 3),
@@ -72,10 +91,10 @@ public class Tile {
 	 	);
 		ret.getFaces().addAll(
 	 			// Top Faces
-	 			4,0,	2,0,	3,0,
-	 			4,0,	1,0,	2,0,
-	 			5,0,	1,0,	4,0,
-	 			5,0,	0,0,	1,0,
+	 			4,4,	2,2,	3,3,
+	 			4,4,	1,1,	2,2,
+	 			5,5,	1,1,	4,4,
+	 			5,5,	0,0,	1,1,
 	 			// Side 1
 	 			4,0,	9,0,	10,0,
 	 			3,0,	9,0,	4,0,
