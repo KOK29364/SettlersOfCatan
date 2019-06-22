@@ -29,4 +29,9 @@ public class Tile {
 		return pos;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Tile: (%s|%s), %s", pos.getX(), pos.getY(), terrain);
+	}
+
 }

@@ -1,6 +1,7 @@
 package catan.main;
 
 
+import catan.data.GameMode;
 import catan.io.ResourceLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,7 +65,7 @@ public class TitleScene extends Scene {
 		titleVBox.getChildren().addAll(titleLabel);
 
 		normalModeButton.setTooltip(new Tooltip("Base Game with no additional Expansions"));
-		normalModeButton.setOnMouseClicked(me -> stage.setScene(new GameScene(stage, resources)));
+		normalModeButton.setOnMouseClicked(me -> stage.setScene(new GameScene(GameMode.BASE_GAME, stage, resources)));
 
 		gameModesHBox.setAlignment(Pos.CENTER);
 		gameModesHBox.setPadding(new Insets(16, 0, 32, 0));

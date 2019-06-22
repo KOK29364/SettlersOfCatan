@@ -1,6 +1,6 @@
 package catan.data.terrain;
 
-import game.Resource;
+import catan.data.Resource;
 
 
 public enum Terrain {

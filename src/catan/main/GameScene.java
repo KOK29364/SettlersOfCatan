@@ -1,7 +1,11 @@
 package catan.main;
 
+import catan.data.GameMode;
+import catan.data.terrain.Board;
 import catan.io.ResourceLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -12,22 +16,51 @@ public class GameScene extends Scene {
 	private ResourceLoader resources;
 
 	private StackPane root;
+	private Canvas canvas;
+
+	private GameMode gameMode;
+	private Board board;
+	private Point2D scroll, startDrag;
 
 
-	public GameScene(Stage stage, ResourceLoader resources) {
+	public GameScene(GameMode gameMode, Stage stage, ResourceLoader resources) {
 		super(new StackPane(), stage.getScene().getWidth(), stage.getScene().getHeight());
-		this.init(stage, resources);
+		this.init(gameMode, stage, resources);
 		this.start();
 	}
 
-	private void init(Stage stage, ResourceLoader resources) {
+	private void init(GameMode gameMode, Stage stage, ResourceLoader resources) {
 		this.stage = stage;
 		this.resources = resources;
 		root = (StackPane) this.getRoot();
+
+		this.gameMode = gameMode;
+		canvas = new Canvas();
+		board = new Board(gameMode);
+		scroll = Point2D.ZERO;
 	}
 
 	private void start() {
+		canvas.widthProperty().bind(root.widthProperty());
+		canvas.heightProperty().bind(root.heightProperty());
 
+		canvas.setOnMousePressed(me -> {
+			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
+		});
+		canvas.setOnMouseDragged(me -> {
+			final double dragDeltaX = startDrag.getX() - me.getSceneX();
+			final double dragDeltaY = startDrag.getY() - me.getSceneY();
+
+			scroll = scroll.add(dragDeltaX, dragDeltaY);
+			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
+			System.out.println(scroll);
+		});
+
+		root.getChildren().add(canvas);
+
+		board.render(canvas.getGraphicsContext2D(), scroll);
+
+		canvas.requestFocus();
 	}
 
 }
