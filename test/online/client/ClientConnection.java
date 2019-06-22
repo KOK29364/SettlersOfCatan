@@ -1,4 +1,4 @@
-package online.webserver;
+package online.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,10 +8,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import online.server.Server;
 
-public class ClientScript {
-	public static void main(String[] args) throws IOException {
 
+public class ClientConnection {
+
+	public ClientConnection() {
 		try (Socket serverSocket = new Socket(Server.HOST_NAME, Server.PORT_NUMBER)) {
 			System.out.println("Connection established to " + Server.HOST_NAME + ".");
 

@@ -1,4 +1,4 @@
-package online.webserver;
+package online.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;

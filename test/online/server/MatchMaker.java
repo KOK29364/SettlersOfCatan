@@ -1,4 +1,4 @@
-package online.webserver;
+package online.server;
 
 import java.util.ArrayList;
 

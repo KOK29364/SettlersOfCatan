@@ -1,4 +1,4 @@
-package online.webserver;
+package online.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -32,11 +32,6 @@ public class Server {
 			e.printStackTrace();
 			System.exit(1);
 		}
-	}
-
-
-	public static void main(String[] args) {
-		new Server();
 	}
 
 }
