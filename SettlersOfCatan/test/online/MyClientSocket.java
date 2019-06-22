@@ -27,10 +27,7 @@ public class MyClientSocket {
 	}
 
 	public static void main(String[] args) throws Exception {
-<<<<<<< HEAD
-=======
 		String serverIP = "172.16.152.1";
->>>>>>> branch 'master' of https://github.com/KOK29364/SettlersOfCatan
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("\nIP: ");
 		final String ip = scanner.nextLine();
