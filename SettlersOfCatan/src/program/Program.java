@@ -44,7 +44,7 @@ public class Program extends Application{
 	/* Start the Program */
 	public void start(Stage stage) throws Exception {
 		
-		grid = new Grid(3, 1, 1.1);
+		grid = new Grid(3, 1, 1);
 		
 		SimpleDoubleProperty angleX = new SimpleDoubleProperty();
 		SimpleDoubleProperty angleY = new SimpleDoubleProperty();

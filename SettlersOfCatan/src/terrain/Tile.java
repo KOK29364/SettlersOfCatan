@@ -1,18 +1,13 @@
 package terrain;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import javafx.geometry.Point3D;
-
-import javafx.scene.image.Image;
 
 import javafx.scene.paint.PhongMaterial;
 
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
-public class Tile {
+public class Tile { // TO-DO: Fix see-through Tiles
 	
 	private Point3D location; // The coordinates of the Tile
 	private float size; // The size of one Tile, represented as the distance from its center to any corner
@@ -29,7 +24,7 @@ public class Tile {
 		this.terrain = terrain;
 		
 		this.mesh = new MeshView(Tile.createHexagonMesh(this.size, this.height));
-		this.mesh.setMaterial(new PhongMaterial(this.terrain.getColor()));
+		this.mesh.setMaterial(new PhongMaterial());
 		this.mesh.setTranslateX(this.location.getX());
 		this.mesh.setTranslateY(this.location.getY());
 		this.mesh.setTranslateZ(this.location.getZ());
@@ -45,13 +40,11 @@ public class Tile {
 		this.terrain = terrain;
 		
 		this.mesh = new MeshView(mesh);
-		PhongMaterial wood = new PhongMaterial();
-		try {
-			wood.setDiffuseMap(new Image(new FileInputStream("res/texture/YES.jpg")));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		this.mesh.setMaterial(wood);
+		PhongMaterial tex = new PhongMaterial();
+		
+		tex.setDiffuseMap(this.terrain.getTexture());
+		
+		this.mesh.setMaterial(tex);
 		this.mesh.setTranslateX(this.location.getX());
 		this.mesh.setTranslateY(this.location.getY());
 		this.mesh.setTranslateZ(this.location.getZ());
