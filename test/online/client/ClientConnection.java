@@ -31,7 +31,7 @@ public class ClientConnection {
 						break loop;
 					case "lobby":
 						System.out.println("Enter ID:");
-						final int lobbyID = scanner.nextInt();
+						final int lobbyID = Integer.parseInt(scanner.nextLine());
 						System.out.println("Looking for a game with ID " + lobbyID + "...");
 						writer.println("lobby:" + lobbyID);
 						break;
