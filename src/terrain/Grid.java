@@ -28,14 +28,8 @@ public class Grid {
 		TriangleMesh tm = Tile.createHexagonMesh(tileSize, (float) 0.4);
 		
 		ArrayList<Terrain> temp = new ArrayList<Terrain>(Arrays.asList(Terrain.standardTerrain));
-<<<<<<< HEAD
-		temp.stream().forEach(ter -> System.out.println(ter.name()));
-		System.out.println(temp.size());
-		Random rand = new Random();
-=======
 		Random rand = new Random();
 		
->>>>>>> branch 'master' of https://github.com/KOK29364/SettlersOfCatan
 		for(int x = 0; x < (circles * 2) - 1; x ++){
 			this.tiles[x] = new Tile[(circles * 3) - 1 - (circles + (Math.abs((circles - 1) - x)))];
 			for(int y = 0; y < this.tiles[x].length; y ++){
