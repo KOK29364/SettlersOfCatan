@@ -21,6 +21,7 @@ public class GameScene extends Scene {
 	private GameMode gameMode;
 	private Board board;
 	private Point2D scroll, startDrag;
+	private double zoom;
 
 
 	public GameScene(GameMode gameMode, Stage stage, ResourceLoader resources) {
@@ -38,6 +39,7 @@ public class GameScene extends Scene {
 		canvas = new Canvas();
 		board = new Board(gameMode);
 		scroll = Point2D.ZERO;
+		zoom = 1.0;
 	}
 
 	private void start() {
@@ -53,14 +55,22 @@ public class GameScene extends Scene {
 
 			scroll = scroll.add(dragDeltaX, dragDeltaY);
 			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
-			System.out.println(scroll);
+
+			board.render(canvas.getGraphicsContext2D(), scroll, zoom);
+		});
+		canvas.setOnScroll(se -> {
+			zoom += se.getDeltaY() * 2 / 1000;
+			zoom = Math.max(zoom, 0.5);
+			zoom = Math.min(zoom, 4);
+
+			board.render(canvas.getGraphicsContext2D(), scroll, zoom);
 		});
 
 		root.getChildren().add(canvas);
 
-		board.render(canvas.getGraphicsContext2D(), scroll);
-
 		canvas.requestFocus();
+
+		board.render(canvas.getGraphicsContext2D(), scroll, zoom);
 	}
 
 }
