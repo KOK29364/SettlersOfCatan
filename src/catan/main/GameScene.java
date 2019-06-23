@@ -6,6 +6,7 @@ import catan.io.ResourceLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -20,7 +21,7 @@ public class GameScene extends Scene {
 
 	private GameMode gameMode;
 	private Board board;
-	private Point2D scroll, startDrag;
+	private Point2D scroll, startDrag, translate;
 	private double zoom;
 
 
@@ -37,18 +38,19 @@ public class GameScene extends Scene {
 
 		this.gameMode = gameMode;
 		canvas = new Canvas();
-		board = new Board(gameMode);
+		board = new Board(gameMode, resources);
 		scroll = Point2D.ZERO;
+		translate = Point2D.ZERO;
 		zoom = 1.0;
 	}
 
 	private void start() {
 		canvas.widthProperty().bind(root.widthProperty());
 		canvas.heightProperty().bind(root.heightProperty());
+		canvas.widthProperty().addListener((obs, oldVal, newVal) -> this.render());
+		canvas.heightProperty().addListener((obs, oldVal, newVal) -> this.render());
 
-		canvas.setOnMousePressed(me -> {
-			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
-		});
+		canvas.setOnMousePressed(me -> startDrag = new Point2D(me.getSceneX(), me.getSceneY()));
 		canvas.setOnMouseDragged(me -> {
 			final double dragDeltaX = startDrag.getX() - me.getSceneX();
 			final double dragDeltaY = startDrag.getY() - me.getSceneY();
@@ -56,19 +58,31 @@ public class GameScene extends Scene {
 			scroll = scroll.add(dragDeltaX, dragDeltaY);
 			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
 
-			board.render(canvas.getGraphicsContext2D(), scroll, zoom);
+			this.render();
 		});
 		canvas.setOnScroll(se -> {
 			zoom += se.getDeltaY() * 2 / 1000;
 			zoom = Math.max(zoom, 0.5);
 			zoom = Math.min(zoom, 4);
 
-			board.render(canvas.getGraphicsContext2D(), scroll, zoom);
+			this.render();
 		});
 
 		root.getChildren().add(canvas);
-
 		canvas.requestFocus();
+
+		this.render();
+	}
+
+
+	private void render() {
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+
+		gc.translate(translate.getX() * -1, translate.getY() * -1);
+		translate = new Point2D(canvas.getWidth() / 2, canvas.getHeight() / 2);
+		gc.translate(translate.getX(), translate.getY());
+
+		gc.clearRect(-canvas.getWidth() / 2, -canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight());
 
 		board.render(canvas.getGraphicsContext2D(), scroll, zoom);
 	}

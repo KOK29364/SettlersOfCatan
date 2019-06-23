@@ -1,5 +1,6 @@
 package catan.data.terrain;
 
+import catan.io.ResourceLoader;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,13 +12,16 @@ public class Tile {
 	public static final double TILE_SIZE = 32;
 
 
+	private ResourceLoader resources;
+
 	private Terrain terrain;
 	private Point2D coords;
 
 
-	public Tile(Terrain terrain, Point2D coords) {
+	public Tile(Terrain terrain, Point2D coords, ResourceLoader resources) {
 		this.terrain = terrain;
 		this.coords = coords;
+		this.resources = resources;
 	}
 
 
