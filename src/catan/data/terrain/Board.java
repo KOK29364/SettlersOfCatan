@@ -64,7 +64,16 @@ public class Board {
 			case BASE_GAME:
 				Tile[][] t = new Tile[7][];
 
-				ArrayList<Terrain> standardTerrain = new ArrayList<>(Arrays.asList(Terrain.STANDARD_TERRAIN));
+				// @formatter:off
+				ArrayList<Terrain> standardTerrain = new ArrayList<>(Arrays.asList(
+					Terrain.FOREST, Terrain.FOREST, Terrain.FOREST, Terrain.FOREST,
+					Terrain.FIELD, Terrain.FIELD, Terrain.FIELD, Terrain.FIELD,
+					Terrain.MOUNTAIN, Terrain.MOUNTAIN, Terrain.MOUNTAIN,
+					Terrain.PASTURE, Terrain.PASTURE, Terrain.PASTURE, Terrain.PASTURE,
+					Terrain.HILL, Terrain.HILL, Terrain.HILL,
+					Terrain.DESERT
+				));
+				// @formatter:on
 
 				Random rand = new Random();
 				for (int y = 0; y < t.length; y++) {

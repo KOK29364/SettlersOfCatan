@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 
 public class Tile {
 
-	public static final double TILE_SIZE = 32;
+	public static final double TILE_SIZE = 48;
 
 
 	private ResourceLoader resources;
@@ -42,10 +42,20 @@ public class Tile {
 		// @formatter:on
 
 		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(4);
-		gc.setFill(terrain.getColor());
+		gc.setLineWidth(3 * zoom);
 		gc.strokePolygon(xPoints, yPoints, nPoints);
-		gc.fillPolygon(xPoints, yPoints, nPoints);
+
+
+		// @formatter:off
+		Dimension2D tileSize = Tile.getDimensions(TILE_SIZE, zoom);
+		gc.drawImage(
+				resources.getImage(terrain.getImagePath()),
+				pos.getX() - tileSize.getWidth() / 2,
+				pos.getY() - tileSize.getHeight() / 2,
+				tileSize.getWidth(),
+				tileSize.getHeight()
+			);
+		// @formatter:on
 	}
 
 

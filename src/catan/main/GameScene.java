@@ -7,6 +7,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -17,8 +19,10 @@ public class GameScene extends Scene {
 	private ResourceLoader resources;
 
 	private StackPane root;
+	private ImageView bgView;
 	private Canvas canvas;
 
+	private Image bgImage;
 	private GameMode gameMode;
 	private Board board;
 	private Point2D scroll, startDrag, translate;
@@ -35,9 +39,11 @@ public class GameScene extends Scene {
 		this.stage = stage;
 		this.resources = resources;
 		root = (StackPane) this.getRoot();
-
-		this.gameMode = gameMode;
+		bgView = new ImageView();
 		canvas = new Canvas();
+
+		bgImage = resources.getImage("img/tabletop.png");
+		this.gameMode = gameMode;
 		board = new Board(gameMode, resources);
 		scroll = Point2D.ZERO;
 		translate = Point2D.ZERO;
@@ -45,6 +51,10 @@ public class GameScene extends Scene {
 	}
 
 	private void start() {
+		bgView.setImage(bgImage);
+		bgView.fitWidthProperty().bind(root.widthProperty());
+		bgView.fitHeightProperty().bind(root.heightProperty());
+
 		canvas.widthProperty().bind(root.widthProperty());
 		canvas.heightProperty().bind(root.heightProperty());
 		canvas.widthProperty().addListener((obs, oldVal, newVal) -> this.render());
@@ -68,7 +78,7 @@ public class GameScene extends Scene {
 			this.render();
 		});
 
-		root.getChildren().add(canvas);
+		root.getChildren().addAll(bgView, canvas);
 		canvas.requestFocus();
 
 		this.render();
