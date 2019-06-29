@@ -2,7 +2,9 @@ package catan.main;
 
 import catan.data.GameMode;
 import catan.data.terrain.Board;
+import catan.data.terrain.Tile;
 import catan.io.ResourceLoader;
+import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -10,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -45,9 +48,27 @@ public class GameScene extends Scene {
 		bgImage = resources.getImage("img/tabletop.png");
 		this.gameMode = gameMode;
 		board = new Board(gameMode, resources);
-		scroll = Point2D.ZERO;
 		translate = Point2D.ZERO;
 		zoom = 1.0;
+
+		switch (gameMode) {
+			case BASE_GAME:
+				final Dimension2D tileDimensions = Tile.getDimensions(Tile.TILE_SIZE, zoom);
+				scroll = new Point2D(tileDimensions.getWidth() * 4.5, tileDimensions.getHeight() * 2.25);
+				break;
+			case SEAFARERS:
+				scroll = Point2D.ZERO;
+				break;
+			case CITIES_AND_KNIGHTS:
+				scroll = Point2D.ZERO;
+				break;
+			case TRADERS_AND_BARBARIANS:
+				scroll = Point2D.ZERO;
+				break;
+			case EXPLORERS_AND_PIRATES:
+				scroll = Point2D.ZERO;
+				break;
+		}
 	}
 
 	private void start() {
@@ -60,7 +81,9 @@ public class GameScene extends Scene {
 		canvas.widthProperty().addListener((obs, oldVal, newVal) -> this.render());
 		canvas.heightProperty().addListener((obs, oldVal, newVal) -> this.render());
 
-		canvas.setOnMousePressed(me -> startDrag = new Point2D(me.getSceneX(), me.getSceneY()));
+		canvas.setOnMousePressed(me -> {
+			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
+		});
 		canvas.setOnMouseDragged(me -> {
 			final double dragDeltaX = startDrag.getX() - me.getSceneX();
 			final double dragDeltaY = startDrag.getY() - me.getSceneY();
@@ -76,6 +99,15 @@ public class GameScene extends Scene {
 			zoom = Math.min(zoom, 4);
 
 			this.render();
+		});
+		canvas.setOnMouseMoved(me -> {
+			final Point2D mouseCoords = Tile.pixelToAxial(new Point2D(me.getX(), me.getY()), zoom, scroll.multiply(-1).add(canvas.getWidth() / 2, canvas.getHeight() / 2));
+			final Tile tile = board.getTile(mouseCoords);
+
+			this.render();
+			if (tile != null) {
+				tile.highlight(canvas.getGraphicsContext2D(), Tile.axialToPixel(mouseCoords, zoom, scroll.multiply(-1)), zoom, new Color(1.0, 0.0, 1.0, 1.0));
+			}
 		});
 
 		root.getChildren().addAll(bgView, canvas);

@@ -6,7 +6,6 @@ import java.util.Random;
 
 import catan.data.GameMode;
 import catan.io.ResourceLoader;
-import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -31,17 +30,13 @@ public class Board {
 
 		switch (gameMode) {
 			case BASE_GAME:
-				final Dimension2D tileDimensions = Tile.getDimensions(Tile.TILE_SIZE, zoom);
-				final double boardWidth = tileDimensions.getWidth() * 7;
-				final double boardHeight = tileDimensions.getHeight() * 3 / 4 * 7;
-				offset = offset.subtract(boardWidth / 2, boardHeight / 2);
-
 				for (int y = 0; y < tiles.length; y++) {
 					for (int x = 0; x < tiles[y].length; x++) {
-						final double hexCenterX = offset.getX() + ((Math.abs(3 - tiles[y][x].getCoords().getY()) / 2) + x + 0.5) * tileDimensions.getWidth();
-						final double hexCenterY = offset.getY() + ((tiles[y][x].getCoords().getY() * 3 / 4) + 0.5) * tileDimensions.getHeight();
-						Point2D hexCenter = new Point2D(hexCenterX, hexCenterY);
+						final Point2D axialToPixel = Tile.axialToPixel(tiles[y][x].getCoords(), zoom, offset);
+						final double hexCenterX = axialToPixel.getX();
+						final double hexCenterY = axialToPixel.getY();
 
+						Point2D hexCenter = new Point2D(hexCenterX, hexCenterY);
 						tiles[y][x].render(gc, hexCenter, zoom);
 					}
 
@@ -75,11 +70,11 @@ public class Board {
 				));
 				// @formatter:on
 
-				Random rand = new Random();
 				for (int y = 0; y < t.length; y++) {
 					t[y] = new Tile[7 - Math.abs(3 - y)];
 				}
 
+				Random rand = new Random();
 				for (int y = 0; y < t.length; y++) {
 					for (int x = 0; x < t[y].length; x++) {
 						final Point2D coords = new Point2D(x + Math.max((3 - y), 0), y);
@@ -104,6 +99,22 @@ public class Board {
 				break;
 			case EXPLORERS_AND_PIRATES:
 				break;
+		}
+
+		return null;
+	}
+
+
+	public Tile[][] getTiles() {
+		return tiles;
+	}
+
+	public Tile getTile(Point2D axial) {
+		for (int y = 0; y < tiles.length; y++) {
+			for (int x = 0; x < tiles[y].length; x++) {
+				final Point2D tileCoords = tiles[y][x].getCoords();
+				if (axial.getX() == tileCoords.getX() && axial.getY() == tileCoords.getY()) return tiles[y][x];
+			}
 		}
 
 		return null;
