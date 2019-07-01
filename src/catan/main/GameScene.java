@@ -1,5 +1,7 @@
 package catan.main;
 
+import java.util.Arrays;
+
 import catan.data.GameMode;
 import catan.data.terrain.Board;
 import catan.data.terrain.Tile;
@@ -28,7 +30,7 @@ public class GameScene extends Scene {
 	private Image bgImage;
 	private GameMode gameMode;
 	private Board board;
-	private Point2D scroll, startDrag, translate;
+	private Point2D offset, startDrag, translate;
 	private double zoom;
 
 
@@ -54,19 +56,19 @@ public class GameScene extends Scene {
 		switch (gameMode) {
 			case BASE_GAME:
 				final Dimension2D tileDimensions = Tile.getDimensions(Tile.TILE_SIZE, zoom);
-				scroll = new Point2D(tileDimensions.getWidth() * 4.5, tileDimensions.getHeight() * 2.25);
+				offset = new Point2D(tileDimensions.getWidth() * -4.5, tileDimensions.getHeight() * -2.25);
 				break;
 			case SEAFARERS:
-				scroll = Point2D.ZERO;
+				offset = Point2D.ZERO;
 				break;
 			case CITIES_AND_KNIGHTS:
-				scroll = Point2D.ZERO;
+				offset = Point2D.ZERO;
 				break;
 			case TRADERS_AND_BARBARIANS:
-				scroll = Point2D.ZERO;
+				offset = Point2D.ZERO;
 				break;
 			case EXPLORERS_AND_PIRATES:
-				scroll = Point2D.ZERO;
+				offset = Point2D.ZERO;
 				break;
 		}
 	}
@@ -83,12 +85,18 @@ public class GameScene extends Scene {
 
 		canvas.setOnMousePressed(me -> {
 			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
+
+			final Point2D clickedCorner = Tile.pixelToCorner(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2));
+			final Point2D[] clickedEdge = Tile.pixelToEdge(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2));
+
+			System.out.println("Clicked Corner: " + clickedCorner);
+			System.out.println("Clicked Edge:  " + Arrays.toString(clickedEdge));
 		});
 		canvas.setOnMouseDragged(me -> {
 			final double dragDeltaX = startDrag.getX() - me.getSceneX();
 			final double dragDeltaY = startDrag.getY() - me.getSceneY();
 
-			scroll = scroll.add(dragDeltaX, dragDeltaY);
+			offset = offset.subtract(dragDeltaX, dragDeltaY);
 			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
 
 			this.render();
@@ -101,12 +109,12 @@ public class GameScene extends Scene {
 			this.render();
 		});
 		canvas.setOnMouseMoved(me -> {
-			final Point2D mouseCoords = Tile.pixelToAxial(new Point2D(me.getX(), me.getY()), zoom, scroll.multiply(-1).add(canvas.getWidth() / 2, canvas.getHeight() / 2));
+			final Point2D mouseCoords = Tile.pixelToAxial(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2));
 			final Tile tile = board.getTile(mouseCoords);
 
 			this.render();
 			if (tile != null) {
-				tile.highlight(canvas.getGraphicsContext2D(), Tile.axialToPixel(mouseCoords, zoom, scroll.multiply(-1)), zoom, new Color(1.0, 0.0, 1.0, 1.0));
+				tile.highlight(canvas.getGraphicsContext2D(), Tile.axialToPixel(mouseCoords, zoom, offset), zoom, new Color(1.0, 0.0, 1.0, 1.0));
 			}
 		});
 
@@ -126,7 +134,7 @@ public class GameScene extends Scene {
 
 		gc.clearRect(-canvas.getWidth() / 2, -canvas.getHeight() / 2, canvas.getWidth(), canvas.getHeight());
 
-		board.render(canvas.getGraphicsContext2D(), scroll, zoom);
+		board.render(canvas.getGraphicsContext2D(), offset, zoom);
 	}
 
 }

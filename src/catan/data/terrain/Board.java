@@ -25,9 +25,7 @@ public class Board {
 	}
 
 
-	public void render(GraphicsContext gc, Point2D scroll, double zoom) {
-		Point2D offset = scroll.multiply(-1);
-
+	public void render(GraphicsContext gc, Point2D offset, double zoom) {
 		switch (gameMode) {
 			case BASE_GAME:
 				for (int y = 0; y < tiles.length; y++) {

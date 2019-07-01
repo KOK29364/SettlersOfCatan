@@ -1,5 +1,9 @@
 package catan.data.terrain;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import catan.io.ResourceLoader;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
@@ -109,37 +113,37 @@ public class Tile {
 	}
 
 	public static Point2D cubeToAxial(Point3D cube) {
-		final int q = (int) cube.getX();
-		final int r = (int) cube.getZ();
+		final double q = cube.getX();
+		final double r = cube.getZ();
 		return new Point2D(q, r);
 	}
 
 	public static Point3D axialToCube(Point2D axial) {
-		final int x = (int) axial.getX();
-		final int z = (int) axial.getY();
-		final int y = -x - z;
+		final double x = axial.getX();
+		final double z = axial.getY();
+		final double y = -x - z;
 		return new Point3D(x, y, z);
 	}
 
-//	public static Point3D cubeRound(Point3D fractionalCube) {
-//		double rx = Math.round(fractionalCube.getX());
-//		double ry = Math.round(fractionalCube.getY());
-//		double rz = Math.round(fractionalCube.getZ());
-//
-//		final double xDiff = Math.abs(rx - fractionalCube.getX());
-//		final double yDiff = Math.abs(ry - fractionalCube.getY());
-//		final double zDiff = Math.abs(rz - fractionalCube.getZ());
-//
-//		if (xDiff > yDiff && xDiff > zDiff) rx = -ry - rz;
-//		else if (yDiff > zDiff) ry = -rx - rz;
-//		else rz = -rx - ry;
-//
-//		return new Point3D(rx, ry, rz);
-//	}
-//
-//	public static Point2D axialRound(Point2D axial) {
-//		return cubeToAxial(cubeRound(axialToCube(axial)));
-//	}
+	public static Point3D cubeRound(Point3D fractionalCube) {
+		double rx = Math.round(fractionalCube.getX());
+		double ry = Math.round(fractionalCube.getY());
+		double rz = Math.round(fractionalCube.getZ());
+
+		final double xDiff = Math.abs(rx - fractionalCube.getX());
+		final double yDiff = Math.abs(ry - fractionalCube.getY());
+		final double zDiff = Math.abs(rz - fractionalCube.getZ());
+
+		if (xDiff > yDiff && xDiff > zDiff) rx = -ry - rz;
+		else if (yDiff > zDiff) ry = -rx - rz;
+		else rz = -rx - ry;
+
+		return new Point3D(rx, ry, rz);
+	}
+
+	public static Point2D axialRound(Point2D fractionalAxial) {
+		return Tile.cubeToAxial(Tile.cubeRound(Tile.axialToCube(fractionalAxial)));
+	}
 
 	public static Point2D axialToPixel(Point2D coords, double zoom, Point2D offset) {
 		final double x = offset.getX() + (Tile.TILE_SIZE * zoom * ((Math.sqrt(3) * coords.getX() + ((Math.sqrt(3) / 2) * coords.getY()))));
@@ -149,13 +153,40 @@ public class Tile {
 	}
 
 	public static Point2D pixelToAxial(Point2D pixel, double zoom, Point2D offset) {
-		final Dimension2D tileDimensions = Tile.getDimensions(TILE_SIZE, zoom);
 		final double pixelX = pixel.getX() - offset.getX();
 		final double pixelY = pixel.getY() - offset.getY();
-		final double q = Math.round(((Math.sqrt(3) / 3 * pixelX) - ((1.0 / 3) * pixelY)) / (Tile.TILE_SIZE * zoom));
-		final double r = Math.round(((2.0 / 3) * pixelY) / (Tile.TILE_SIZE * zoom));
+		final double q = ((Math.sqrt(3) / 3 * pixelX) - ((1.0 / 3) * pixelY)) / (Tile.TILE_SIZE * zoom);
+		final double r = ((2.0 / 3) * pixelY) / (Tile.TILE_SIZE * zoom);
 
-		return new Point2D(q, r);
+		return Tile.axialRound(new Point2D(q, r));
+	}
+
+	public static Point2D[] pixelToEdge(Point2D pixel, double zoom, Point2D offset) {
+		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
+		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
+
+		TreeMap<Double, Point2D> cornerDistances = new TreeMap<>();
+		for (int i = 0; i < 6; i++) {
+			Point2D nextCorner = Tile.getCorner(hexCenter, TILE_SIZE * zoom, i);
+			cornerDistances.put(pixel.distance(nextCorner), nextCorner);
+		}
+
+		Iterator<Entry<Double, Point2D>> iterator = cornerDistances.entrySet().iterator();
+		return new Point2D[] { iterator.next().getValue(), iterator.next().getValue() };
+	}
+
+	public static Point2D pixelToCorner(Point2D pixel, double zoom, Point2D offset) {
+		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
+		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
+
+		TreeMap<Double, Point2D> cornerDistances = new TreeMap<>();
+		for (int i = 0; i < 6; i++) {
+			Point2D nextCorner = Tile.getCorner(hexCenter, TILE_SIZE * zoom, i);
+			cornerDistances.put(pixel.distance(nextCorner), nextCorner);
+		}
+
+		Iterator<Entry<Double, Point2D>> iterator = cornerDistances.entrySet().iterator();
+		return iterator.next().getValue();
 	}
 
 }
