@@ -147,7 +147,8 @@ public class Tile {
 	/**
 	 * The width and height of a hex, given the current size and zoom.
 	 * 
-	 * @param size The size of a hex, defined as the center to any corner.
+	 * @param size The size of a hex, defined as the distance from the center to any
+	 *             corner.
 	 * @param zoom How zoomed in the user currently is.
 	 * 
 	 * @return The width and height of a hex, given the current size and zoom.
