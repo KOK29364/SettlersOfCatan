@@ -26,6 +26,15 @@ public class Tile {
 	private Point2D coords;
 
 
+	/**
+	 * Creates a new Tile object
+	 * 
+	 * @param terrain   The terrain of the new Tile.
+	 * @param coords    Coordinates of the new Tile, given an axial coordinate
+	 *                  system.
+	 * @param resources The common ResourceLoader object, so that the Tile may grab
+	 *                  assets easily.
+	 */
 	public Tile(Terrain terrain, Point2D coords, ResourceLoader resources) {
 		this.terrain = terrain;
 		this.coords = coords;
@@ -33,6 +42,13 @@ public class Tile {
 	}
 
 
+	/**
+	 * Renders the Tile onto a given position on the screen.
+	 * 
+	 * @param gc   The GraphicsContext of the canvas.
+	 * @param pos  The center of the hex on the screen.
+	 * @param zoom How zoomed in the user currently is.
+	 */
 	public void render(GraphicsContext gc, Point2D pos, double zoom) {
 		// @formatter:off
 		final double size = Tile.TILE_SIZE * zoom;
@@ -66,6 +82,18 @@ public class Tile {
 		// @formatter:on
 	}
 
+	/**
+	 * Highlights the Tile.
+	 * <p>
+	 * Fills in a semi-transparent area in front of the hex, then draws a thick
+	 * opaque border around it.
+	 * </p>
+	 * 
+	 * @param gc    The GraphicsContext of the canvas.
+	 * @param pos   The center of the hex on the screen.
+	 * @param zoom  How zoomed in the user currently is.
+	 * @param color The desired color of the highlight.
+	 */
 	public void highlight(GraphicsContext gc, Point2D pos, double zoom, Color color) {
 		gc.setStroke(color);
 		gc.setLineWidth(4 * zoom);
@@ -91,10 +119,20 @@ public class Tile {
 	}
 
 
+	/**
+	 * The terrain value.
+	 * 
+	 * @return The terrain value.
+	 */
 	public Terrain getTerrain() {
 		return terrain;
 	}
 
+	/**
+	 * The axial coordinates of the hex.
+	 * 
+	 * @return The axial coordinates of the hex.
+	 */
 	public Point2D getCoords() {
 		return coords;
 	}
@@ -106,6 +144,14 @@ public class Tile {
 	}
 
 
+	/**
+	 * The width and height of a hex, given the current size and zoom.
+	 * 
+	 * @param size The size of a hex, defined as the center to any corner.
+	 * @param zoom How zoomed in the user currently is.
+	 * 
+	 * @return The width and height of a hex, given the current size and zoom.
+	 */
 	public static Dimension2D getDimensions(double size, double zoom) {
 		final double w = Math.sqrt(3) * size * zoom;
 		final double h = 2 * size * zoom;
@@ -113,6 +159,19 @@ public class Tile {
 		return new Dimension2D(w, h);
 	}
 
+	/**
+	 * The pixel location of any desired corner.
+	 * <p>
+	 * The returned corner is determined by i, such that the top-left corner is i=0
+	 * and the top corner is i=5.
+	 * </p>
+	 * 
+	 * @param center The center of the hex on the screen.
+	 * @param radius The size of a hex, defined as the center to any corner.
+	 * @param i      The desired corner, as defined above.
+	 * 
+	 * @return
+	 */
 	public static Point2D getCorner(Point2D center, double radius, int i) {
 		final double angle_deg = 60 * i - 30;
 		final double angle_rad = Math.toRadians(angle_deg);
@@ -121,12 +180,30 @@ public class Tile {
 		return p;
 	}
 
+	/**
+	 * Converts cube coordinates to axial coordinates.
+	 * 
+	 * @param cube The coordinates in cube format.
+	 * 
+	 * @return The coordinates in axial format.
+	 * 
+	 * @see Tile.axialToCube()
+	 */
 	public static Point2D cubeToAxial(Point3D cube) {
 		final double q = cube.getX();
 		final double r = cube.getZ();
 		return new Point2D(q, r);
 	}
 
+	/**
+	 * Converts axial coordinates to cube coordinates.
+	 * 
+	 * @param axial The coordinates in axial format.
+	 * 
+	 * @return The coordinates in cube format.
+	 * 
+	 * @see Tile.cubeToAxial()
+	 */
 	public static Point3D axialToCube(Point2D axial) {
 		final double x = axial.getX();
 		final double z = axial.getY();
@@ -134,6 +211,15 @@ public class Tile {
 		return new Point3D(x, y, z);
 	}
 
+	/**
+	 * Rounds an imperfect cube coordinate to the nearest hex.
+	 * 
+	 * @param fractionalCube The fractional cube coordinate.
+	 * 
+	 * @return The nearest fitting hex.
+	 * 
+	 * @see Tile.axialRound()
+	 */
 	public static Point3D cubeRound(Point3D fractionalCube) {
 		double rx = Math.round(fractionalCube.getX());
 		double ry = Math.round(fractionalCube.getY());
@@ -150,10 +236,30 @@ public class Tile {
 		return new Point3D(rx, ry, rz);
 	}
 
+	/**
+	 * Convenience method for rounding imperfect axial coordinates.
+	 * 
+	 * @param fractionalAxial The fractional axial coordinate.
+	 * 
+	 * @return The nearest fitting hex.
+	 * 
+	 * @see Tile.cubeRound()
+	 */
 	public static Point2D axialRound(Point2D fractionalAxial) {
 		return Tile.cubeToAxial(Tile.cubeRound(Tile.axialToCube(fractionalAxial)));
 	}
 
+	/**
+	 * Converts an axial coordinate to a pixel location on the screen.
+	 * 
+	 * @param coords The axial coordinates of the hex.
+	 * @param zoom   How zoomed in the user currently is.
+	 * @param offset How "shifted" the board is.
+	 * 
+	 * @return The center of the hex.
+	 * 
+	 * @see Tile.pixelToAxial()
+	 */
 	public static Point2D axialToPixel(Point2D coords, double zoom, Point2D offset) {
 		final double x = offset.getX() + (Tile.TILE_SIZE * zoom * ((Math.sqrt(3) * coords.getX() + ((Math.sqrt(3) / 2) * coords.getY()))));
 		final double y = offset.getY() + (Tile.TILE_SIZE * zoom * 1.5 * coords.getY());
@@ -161,6 +267,19 @@ public class Tile {
 		return new Point2D(x, y);
 	}
 
+	/**
+	 * Converts a pixel location on-screen into an axial coordinate.
+	 * <p>
+	 * The main purpose of this function is to get the most fitting hex on a mouse
+	 * click.
+	 * </p>
+	 * 
+	 * @param pixel  The pixel on-screen.
+	 * @param zoom   How zoomed in the user currently is.
+	 * @param offset How "shifted" the board is.
+	 * 
+	 * @return The axial coordinates of the hex, in which the given pixel resides.
+	 */
 	public static Point2D pixelToAxial(Point2D pixel, double zoom, Point2D offset) {
 		final double pixelX = pixel.getX() - offset.getX();
 		final double pixelY = pixel.getY() - offset.getY();
@@ -170,6 +289,27 @@ public class Tile {
 		return Tile.axialRound(new Point2D(q, r));
 	}
 
+	/**
+	 * Gives the nearest edge to the given pixel location on-screen.
+	 * <p>
+	 * The edge is defined as the intersection of two axial coordinates.
+	 * </p>
+	 * <p>
+	 * The function first calls Tile.pixelToAxial() to get the clicked Tile, then
+	 * checks to see which two corners are the nearest to the given pixel. It then
+	 * returns the neighboring Tile that shares these two corners.
+	 * </p>
+	 * 
+	 * @param pixel  The pixel on-screen.
+	 * @param zoom   How zoomed in the user currently is.
+	 * @param offset How "shifted" the board is.
+	 * @param board  The Board object, required to call Tile.getNeighbor()
+	 * 
+	 * @return The nearest edge to the pixel, as defined above. If there is no
+	 *         neighboring Tile, the coordinates will be null.
+	 * 
+	 * @see Tile.pixelToCorner()
+	 */
 	public static Point2D[] pixelToEdge(Point2D pixel, double zoom, Point2D offset, Board board) {
 		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
 		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
@@ -195,6 +335,28 @@ public class Tile {
 		return new Point2D[] { tileCoords, (neighbor == null) ? null : neighbor.getCoords() };
 	}
 
+	/**
+	 * Gives the nearest corner to the given pixel location on-screen.
+	 * <p>
+	 * The corner is defined as the intersection of three axial coordinates.
+	 * </p>
+	 * <p>
+	 * The function first calls Tile.pixelToAxial() to get the clicked Tile, then
+	 * checks to see which corner is the nearest to the given pixel. It then returns
+	 * the neighboring Tiles that share this corner.
+	 * </p>
+	 * 
+	 * @param pixel  The pixel on-screen.
+	 * @param zoom   How zoomed in the user currently is.
+	 * @param offset How "shifted" the board is.
+	 * @param board  The Board object, required to call Tile.getNeighbor()
+	 * 
+	 * @return The nearest corner to the pixel, as defined above. If any of the
+	 *         neighboring Tiles is off the board, the coordinates for that Tile
+	 *         will be null.
+	 * 
+	 * @see Tile.pixelToEdge()
+	 */
 	public static Point2D[] pixelToCorner(Point2D pixel, double zoom, Point2D offset, Board board) {
 		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
 		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
@@ -211,6 +373,18 @@ public class Tile {
 		return new Point2D[] { tileCoords, (n1 == null) ? null : n1.getCoords(), (n2 == null) ? null : n2.getCoords() };
 	}
 
+	/**
+	 * Returns all neighbors of a given axial coordinate which are within the bounds
+	 * of the Board.
+	 * 
+	 * @param coords The axial coordinate to get the neighbors of.
+	 * @param board  The Board object.
+	 * 
+	 * @return All neighbors of a given axial coordinate which are within the bounds
+	 *         of the Board.
+	 * 
+	 * @see Tile.getNeighbor()
+	 */
 	public static Tile[] getAllNeighbors(Point2D coords, Board board) {
 		// @formatter:off
 		final Point2D[] axialDirections = {
@@ -228,6 +402,23 @@ public class Tile {
 		return neighbors.toArray(new Tile[0]);
 	}
 
+	/**
+	 * Returns the neighbor of a given axial coordinate in a particular direction,
+	 * or null if there it's outside the bounds of the Board.
+	 * <p>
+	 * The returned neighbor is determined by direction, such that the top-left
+	 * corner is i=0 and the top corner is i=5.
+	 * </p>
+	 * 
+	 * @param coords    The axial coordinate to get the neighbors of.
+	 * @param direction The desired direction, as defined above.
+	 * @param board     The Board object.
+	 * 
+	 * @return The neighbor of a given axial coordinate in a particular direction,
+	 *         or null if there it's outside the bounds of the Board.
+	 * 
+	 * @see Tile.getAllNeighbors(), Tile.getCorner()
+	 */
 	public static Tile getNeighbor(Point2D coords, int direction, Board board) {
 		// @formatter:off
 		final Point2D[] axialDirections = {

@@ -18,6 +18,13 @@ public class Board {
 	private Tile[][] tiles;
 
 
+	/**
+	 * Creates a new Board object.
+	 * 
+	 * @param gameMode  The current expansion set being played.
+	 * @param resources The common ResourceLoader object, so that the Board may grab
+	 *                  assets easily.
+	 */
 	public Board(GameMode gameMode, ResourceLoader resources) {
 		this.gameMode = gameMode;
 		this.resources = resources;
@@ -25,6 +32,13 @@ public class Board {
 	}
 
 
+	/**
+	 * Renders the Board onto the screen.
+	 * 
+	 * @param gc     The GraphicsContext of the canvas.
+	 * @param offset How "shifted" the Board is.
+	 * @param zoom   How zoomed in the user currently is.
+	 */
 	public void render(GraphicsContext gc, Point2D offset, double zoom) {
 		switch (gameMode) {
 			case BASE_GAME:
@@ -52,6 +66,11 @@ public class Board {
 	}
 
 
+	/**
+	 * Generates a suitable Tile configuration for the current game mode.
+	 * 
+	 * @return The generated Tile[][] array.
+	 */
 	private Tile[][] generateTerrain() {
 		switch (gameMode) {
 			case BASE_GAME:
@@ -103,10 +122,22 @@ public class Board {
 	}
 
 
+	/**
+	 * The Tile[][] array.
+	 * 
+	 * @return The Tile[][] array.
+	 */
 	public Tile[][] getTiles() {
 		return tiles;
 	}
 
+	/**
+	 * Returns the Tile that matches the given axial coordinates.
+	 * 
+	 * @param axial The axial coordinates being searched for.
+	 * 
+	 * @return The Tile that matches the given axial coordinates.
+	 */
 	public Tile getTile(Point2D axial) {
 		for (int y = 0; y < tiles.length; y++) {
 			for (int x = 0; x < tiles[y].length; x++) {
