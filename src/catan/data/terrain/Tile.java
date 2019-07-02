@@ -1,8 +1,11 @@
 package catan.data.terrain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import catan.io.ResourceLoader;
 import javafx.geometry.Dimension2D;
@@ -97,6 +100,12 @@ public class Tile {
 	}
 
 
+	@Override
+	public String toString() {
+		return String.format("%s [%s, %s]", Tile.class.getSimpleName(), terrain, coords);
+	}
+
+
 	public static Dimension2D getDimensions(double size, double zoom) {
 		final double w = Math.sqrt(3) * size * zoom;
 		final double h = 2 * size * zoom;
@@ -161,32 +170,73 @@ public class Tile {
 		return Tile.axialRound(new Point2D(q, r));
 	}
 
-	public static Point2D[] pixelToEdge(Point2D pixel, double zoom, Point2D offset) {
+	public static Point2D[] pixelToEdge(Point2D pixel, double zoom, Point2D offset, Board board) {
 		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
 		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
 
-		TreeMap<Double, Point2D> cornerDistances = new TreeMap<>();
+		HashMap<Integer, Double> cornerDistances = new HashMap<>();
 		for (int i = 0; i < 6; i++) {
 			Point2D nextCorner = Tile.getCorner(hexCenter, TILE_SIZE * zoom, i);
-			cornerDistances.put(pixel.distance(nextCorner), nextCorner);
+			cornerDistances.put(i, pixel.distance(nextCorner));
 		}
 
-		Iterator<Entry<Double, Point2D>> iterator = cornerDistances.entrySet().iterator();
-		return new Point2D[] { iterator.next().getValue(), iterator.next().getValue() };
+		LinkedHashMap<Integer, Double> sortedMap = new LinkedHashMap<>();
+		cornerDistances.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+		Iterator<Integer> iterator = sortedMap.keySet().iterator();
+		final int c1 = iterator.next();
+		final int c2 = iterator.next();
+
+		int direction;
+		if ((c1 == 0 && c2 == 5) || (c2 == 0 && c1 == 5)) direction = 0;
+		else direction = Math.max(c1, c2);
+
+		final Tile neighbor = Tile.getNeighbor(tileCoords, direction, board);
+
+		return new Point2D[] { tileCoords, (neighbor == null) ? null : neighbor.getCoords() };
 	}
 
-	public static Point2D pixelToCorner(Point2D pixel, double zoom, Point2D offset) {
+	public static Point2D[] pixelToCorner(Point2D pixel, double zoom, Point2D offset, Board board) {
 		final Point2D tileCoords = Tile.pixelToAxial(pixel, zoom, offset);
 		final Point2D hexCenter = Tile.axialToPixel(tileCoords, zoom, offset);
 
-		TreeMap<Double, Point2D> cornerDistances = new TreeMap<>();
+		HashMap<Integer, Double> cornerDistances = new HashMap<>();
 		for (int i = 0; i < 6; i++) {
 			Point2D nextCorner = Tile.getCorner(hexCenter, TILE_SIZE * zoom, i);
-			cornerDistances.put(pixel.distance(nextCorner), nextCorner);
+			cornerDistances.put(i, pixel.distance(nextCorner));
 		}
 
-		Iterator<Entry<Double, Point2D>> iterator = cornerDistances.entrySet().iterator();
-		return iterator.next().getValue();
+		final int min = Collections.min(cornerDistances.entrySet(), (e1, e2) -> (int) (e1.getValue() - e2.getValue())).getKey();
+		final Tile n1 = Tile.getNeighbor(tileCoords, min, board);
+		final Tile n2 = Tile.getNeighbor(tileCoords, (min + 1) % 6, board);
+		return new Point2D[] { tileCoords, (n1 == null) ? null : n1.getCoords(), (n2 == null) ? null : n2.getCoords() };
+	}
+
+	public static Tile[] getAllNeighbors(Point2D coords, Board board) {
+		// @formatter:off
+		final Point2D[] axialDirections = {
+				new Point2D(+1, -1), new Point2D(+1, 0), new Point2D(0, +1),
+				new Point2D(-1, +1), new Point2D(-1, 0), new Point2D(0, -1)
+			};
+		// @formatter:on
+
+		ArrayList<Tile> neighbors = new ArrayList<>();
+		for (Point2D d : axialDirections) {
+			Tile neighbor = board.getTile(coords.add(d));
+			if (neighbor != null) neighbors.add(neighbor);
+		}
+
+		return neighbors.toArray(new Tile[0]);
+	}
+
+	public static Tile getNeighbor(Point2D coords, int direction, Board board) {
+		// @formatter:off
+		final Point2D[] axialDirections = {
+				new Point2D(+1, -1), new Point2D(+1, 0), new Point2D(0, +1),
+				new Point2D(-1, +1), new Point2D(-1, 0), new Point2D(0, -1)
+			};
+		// @formatter:on
+
+		return board.getTile(coords.add(axialDirections[direction]));
 	}
 
 }

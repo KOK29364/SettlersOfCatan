@@ -86,11 +86,11 @@ public class GameScene extends Scene {
 		canvas.setOnMousePressed(me -> {
 			startDrag = new Point2D(me.getSceneX(), me.getSceneY());
 
-			final Point2D clickedCorner = Tile.pixelToCorner(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2));
-			final Point2D[] clickedEdge = Tile.pixelToEdge(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2));
+			final Point2D[] clickedCorner = Tile.pixelToCorner(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2), board);
+			final Point2D[] clickedEdge = Tile.pixelToEdge(new Point2D(me.getX(), me.getY()), zoom, offset.add(canvas.getWidth() / 2, canvas.getHeight() / 2), board);
 
-			System.out.println("Clicked Corner: " + clickedCorner);
-			System.out.println("Clicked Edge:  " + Arrays.toString(clickedEdge));
+			System.out.println("Clicked Corner: " + Arrays.toString(clickedCorner));
+			System.out.println("Clicked Edge:   " + Arrays.toString(clickedEdge));
 		});
 		canvas.setOnMouseDragged(me -> {
 			final double dragDeltaX = startDrag.getX() - me.getSceneX();
